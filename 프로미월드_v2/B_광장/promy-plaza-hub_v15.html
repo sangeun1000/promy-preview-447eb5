@@ -317,7 +317,10 @@ function route(u0,v0,u1,v1){const s=cellOf(u0,v0),g=cellOf(u1,v1);if(s<0||g<0)re
   const out=[];let a=[u0,v0],i=0;while(i<pts.length){let j=pts.length-1;while(j>i&&!sight(a,pts[j]))j--;out.push(pts[j]);a=pts[j];i=j+1}return out}
 function walkTo(u,v){autoGo=null;path=route(me.u,me.v,u,v);tgt=path.shift()||null;stuck=0;if(!tgt){dest.style.opacity=0;return}const e=path.length?path[path.length-1]:tgt;dest.style.left=e[0]*100+'%';dest.style.top=e[1]*100+'%';dest.style.opacity=.9}
 /* v7: 열린 존 가까이를 한 번 누르면 그 존 앞까지 걸어가고(입장은 안 함), 더블클릭하면 E와 똑같이 입장한다. 근처 존이 없으면 누른 곳으로만 이동 */
-const openZoneAt=(u,v)=>{let b=null,bd=.05;ZONES.forEach(z=>{if(!z.u||z.lock||!z.tag)return;const d=Math.hypot(u-z.u,(v-z.v)/AR);if(d<bd){bd=d;b=z}});return b};
+/* v15c: 건물 전체(지붕·산 몸통)를 눌러도 그 곳으로 입장 — 그림 좌표(1600×893) 상자 */
+const HITBOX={hall:[285,25,720,335],gate:[600,215,1015,565]};
+const openZoneAt=(u,v)=>{let b=null,bd=.05;ZONES.forEach(z=>{if(!z.u||z.lock||!z.tag)return;const d=Math.hypot(u-z.u,(v-z.v)/AR);if(d<bd){bd=d;b=z}});
+  if(!b){const x=u*1600,y=v*893;ZONES.forEach(z=>{const h=HITBOX[z.k];if(!b&&h&&!z.lock&&x>=h[0]&&x<=h[2]&&y>=h[1]&&y<=h[3])b=z})}return b};
 const mapUV=e=>{const b=frame.getBoundingClientRect();return[(e.clientX-b.left)/b.width,(e.clientY-b.top)/b.height]};
 frame.addEventListener('pointerdown',e=>{if(e.button>0||e.target.closest('.hud')||e.target.closest('.zone'))return;startAudio();const [u,v]=mapUV(e),z=openZoneAt(u,v);if(z&&!z.lock){enter(z);return}/* v15b: 열린 존(건물)을 클릭하면 바로 입장 */walkTo(u,v)});
 const onDbl=e=>{if(avOpen||leaving||e.target.closest('.hud'))return;startAudio();const tg=e.target.closest('.zone');let z=tg?ZONES.find(q=>q.el===tg):openZoneAt(...mapUV(e));
@@ -374,7 +377,10 @@ $('#avgo').onclick=()=>{startAudio();startAv()};nickIn.addEventListener('keydown
 $('#avx').onclick=()=>{if(!avp.classList.contains('re')){startAv();return}const sa=readSave().avatar;if(CANDS.includes(sa)&&sa!==myAv)pickAv(sa);closeAv()};
 $('#avbtn').addEventListener('click',e=>{e.stopPropagation();startAudio();avOpen?null:openAv(true)});
 /* 패널이 떠 있는 동안 지도 눌러 걷기·이름표 누르기를 막는다 */
-frame.addEventListener('pointerdown',e=>{if(avOpen&&!e.target.closest('#avp,#avbtn')){e.stopPropagation();e.preventDefault()}},true);
+frame.addEventListener('pointerdown',e=>{if(avOpen&&!e.target.closest('#avp,#avbtn')){
+  /* v15c: 캐릭터 고르기 창이 떠 있어도 열린 곳(이름표·건물)을 클릭하면 지금 캐릭터로 시작하고 바로 입장 */
+  const tg=e.target.closest('.zone');let z=tg?ZONES.find(q=>q.el===tg):openZoneAt(...mapUV(e));
+  e.stopPropagation();e.preventDefault();if(z&&!z.lock){startAudio();startAv();enter(z)}}},true);
 if(firstVisit&&!ME_Q)openAv(false);
 /* ---- 루프 ---- */
 let stepT=0,runT=0,runDir=null;const ck=new THREE.Clock(),SP=.098*1.5,RUN=1.8,RUN_AFTER=2,ANIM=1.25*1.5;
