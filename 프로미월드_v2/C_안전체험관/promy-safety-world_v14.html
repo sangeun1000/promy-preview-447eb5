@@ -1088,7 +1088,8 @@ WALL.cheer=(sl,name)=>{sl.cheers++};
 function readColumn(sl){const col=WALL.slots.filter(s=>Math.abs(s.x-sl.x)<.01&&s.nick&&!s.taken);if(!col.length)return;let t=col[0];if(RS.sl&&col.includes(RS.sl)&&T-RS.t<7){t=RS.cheered.has(RS.sl)&&col.length>1?(col.find(s=>s!==RS.sl)||col[0]):RS.sl}readSlot(t)}
 function hangHelmet(){if(!S.promise){toast('먼저 내 약속 한 줄을 정해요');openPromise(hangHelmet);return}const sl=INH.slot||WALL.slots.find(s=>!s.nick);if(!sl)return;sl.chain=(INH.slot?INH.slot.nick+' → ':'')+S.nick;sl.prev=INH.slot?sl.promise:'';sl.nick=S.nick;sl.promise=S.promise||'함께 안전 지키기';sl.mine=true;sl.taken=false;sl.stampN=S.done.length;sl.color='#FFD23C';refreshSlot(sl);
  const doHang=()=>{if(sl.helmet){sl.helmet.visible=true;sl.helmet.scale.setScalar(.01);sl.helmet.userData.pop=0}HANG.push({sl,t:T})};if(PL.hasHelmet){if(sl.helmet)sl.helmet.visible=false;takeOffHelmet(sl,doHang)}else doHang();S.safety.hung=true;saveS();clearSnd(3);toast('내 안전모를 벗어 벽에 걸었어요. 다음 사람이 이어받아요',true);
- showReward('벽에 걸었어요!',['다음 사람에게 이어져요'],`${sl.chain}  "${sl.promise}"`,'자유롭게 둘러봐요(추가 미션도 있어요)','promy_lantern');gaugeAdd(1);hudKey=''}
+ showReward('벽에 걸었어요!',['다음 사람에게 이어져요'],`${sl.chain}  "${sl.promise}"`,'자유롭게 둘러봐요(추가 미션도 있어요)','promy_lantern');gaugeAdd(1);hudKey='';
+  /* v14c: 7개 미션 + 약속 벽까지 끝나면 '미션 클리어' 큰 화면 */setTimeout(()=>{if(CORE.every(i=>doneM(i))&&S.safety.hung&&typeof showMissionClear==='function')showMissionClear({sub:'안전체험관 미션 7개를 모두 마쳤어요! 안전 약속 배지를 받았어요',img:'../assets_promy/promy_helmet.png',beforeLeave:()=>{try{saveS()}catch(e){}}})},2800)}
 /* v13: 머리의 안전모가 벗겨져 벽 걸이로 날아가 걸린다 */
 const OFF=[];
 function takeOffHelmet(sl,cb){const hm=PL.av.helmet;if(!PL.hasHelmet||!hm){cb();return}
@@ -1612,4 +1613,47 @@ function exposeDbg(){const TP={gate:[0,34],yard:[0,20],wall:[0,3.2],carpet:[-21.
   complete(id){award(id)},completeAll(){CORE.forEach(i=>{if(!doneM(i))award(i)})},reset(){S.done=[];S.base=0;S.lamps=0;S.warmth=0;S.safety={};saveS();location.reload()},
   state(){return{pos:[+PL.x.toFixed(1),+PL.z.toFixed(1)],zone:zoneOf(PL.x,PL.z),helmet:PL.hasHelmet,inherit:INH.slot&&INH.slot.nick,cur:curMission(),S:{nick:S.nick,promise:S.promise,stamps:stampN(),done:S.done,lamps:S.lamps,warmth:S.warmth,grade:S.grade,safety:S.safety},cross:{...CR},ext:{held:EXT.held,step:EXT.step,acc:+EXT.acc.toFixed(1),hp:+FUR[1].hp.toFixed(2)},cpr:{st:CPR.st,cnt:CPR.cnt,comp:CPR.compCnt},flag:{st:FLG.st,kids:FLG.kids.size},camp:{...CP},smoke:{...SM},signal:sig.ph,ev:EV.state,persons:PERSONS.length,promies:PROMIES.length,fps:+FPS.toFixed(0),glb:Object.keys(GLB),draw:renderer.info.render.calls,tris:renderer.info.render.triangles}}}}
 </script><script src="../assets_promy/bgm.js" data-mood="hall"></script>
+
+<!-- MISSION-CLEAR: 모든 미션을 끝내면 크게 뜨는 화면 + 광장으로 돌아가기 -->
+<style>
+#mclear{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 42%,rgba(255,200,60,.9),rgba(255,170,40,.75) 28%,rgba(18,42,22,.94) 70%);font-family:'Paperlogy','Apple SD Gothic Neo','Malgun Gothic',sans-serif;overflow:hidden}
+#mclear.show{display:flex;animation:mcIn .35s ease-out}
+@keyframes mcIn{from{opacity:0}to{opacity:1}}
+#mclear .mcbox{position:relative;text-align:center;padding:28px 24px 24px;width:min(900px,94vw)}
+#mclear .mcen{font-size:clamp(14px,2.2vw,20px);letter-spacing:.35em;color:#fff3c2;font-weight:800;margin-bottom:6px}
+#mclear h1{margin:0;white-space:nowrap;font-size:clamp(48px,10vw,128px);line-height:1.02;font-weight:800;color:#ffd21f;text-shadow:0 6px 0 #b86e00,0 12px 28px rgba(0,0,0,.45);animation:mcPop .7s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes mcPop{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+#mclear .mcimg{height:clamp(110px,22vh,190px);display:block;margin:6px auto 2px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.35));animation:mcHop 1.4s ease-in-out infinite}
+@keyframes mcHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+#mclear .mcsub{max-width:620px;margin-left:auto!important;margin-right:auto!important;word-break:keep-all;color:#fff;font-size:clamp(15px,2.2vw,20px);font-weight:700;margin:4px 0 18px;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+#mclear .mcgo{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;background:#1f8a43;color:#fff;font:800 clamp(18px,2.6vw,24px) 'Paperlogy',sans-serif;padding:16px 34px;cursor:pointer;box-shadow:0 6px 0 #11592a,0 14px 26px rgba(0,0,0,.3);text-decoration:none}
+#mclear .mcgo:hover{filter:brightness(1.08)}#mclear .mcgo:active{transform:translateY(3px);box-shadow:0 3px 0 #11592a}
+#mclear .mcrow{display:flex;gap:14px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+#mclear .mcsec{border:0;background:rgba(255,255,255,.92);color:#1f4d2a;border-radius:999px;font:700 16px 'Paperlogy',sans-serif;padding:10px 20px;cursor:pointer}
+#mclear .mcghost{border:0;background:none;color:#fff;opacity:.85;font:600 15px sans-serif;text-decoration:underline;cursor:pointer;padding:8px}
+#mclear .mccf{position:absolute;top:-10%;font-size:26px;animation:mcFall linear infinite;pointer-events:none}
+@keyframes mcFall{to{transform:translateY(120vh) rotate(540deg)}}
+</style>
+<div id="mclear" role="dialog" aria-modal="true" aria-label="미션 클리어"><div class="mcbox">
+ <div class="mcen">MISSION CLEAR</div>
+ <h1>미션 클리어!</h1>
+ <img class="mcimg" id="mcImg" alt="">
+ <div class="mcsub" id="mcSub"></div>
+ <a class="mcgo" id="mcGo" href="../B_광장/latest.html">광장으로 돌아가기 <span aria-hidden="true">›</span></a>
+ <div class="mcrow"><button class="mcsec" id="mcRec" type="button" hidden>내 기록 보기</button><button class="mcghost" id="mcStay" type="button">계속 둘러보기</button></div>
+</div></div>
+<script>
+(function(){var el=document.getElementById('mclear');
+ window.showMissionClear=function(o){o=o||{};if(el.classList.contains('show'))return;
+  document.getElementById('mcSub').textContent=o.sub||'모든 미션을 마쳤어요!';
+  var im=document.getElementById('mcImg');im.src=o.img||'../assets_promy/promy_guide.png';
+  var rec=document.getElementById('mcRec');rec.hidden=!o.onRecord;rec.onclick=function(){el.classList.remove('show');o.onRecord&&o.onRecord()};
+  document.getElementById('mcGo').onclick=function(e){if(o.beforeLeave){try{o.beforeLeave()}catch(x){}}};
+  [].slice.call(el.querySelectorAll('.mccf')).forEach(function(c){c.remove()});
+  var E=['🎉','✨','⭐','💛','🎊','🌟'];for(var i=0;i<26;i++){var c=document.createElement('div');c.className='mccf';c.textContent=E[i%E.length];c.style.left=(Math.random()*100)+'%';c.style.animationDuration=(2.6+Math.random()*2.6)+'s';c.style.animationDelay=(-Math.random()*4)+'s';el.appendChild(c)}
+  el.classList.add('show');setTimeout(function(){try{document.getElementById('mcGo').focus()}catch(x){}},300)};
+ document.getElementById('mcStay').onclick=function(){el.classList.remove('show')};
+ addEventListener('keydown',function(e){if(!el.classList.contains('show'))return;e.stopPropagation();if(e.key==='Escape'){e.preventDefault();el.classList.remove('show')}else if(e.key==='Enter'||e.key==='e'||e.key==='E'){e.preventDefault();document.getElementById('mcGo').click()}},true);
+})();
+</script>
 </body></html>
