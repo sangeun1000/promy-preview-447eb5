@@ -1453,8 +1453,8 @@ const PHG=new THREE.Group();PHG.position.set(SH.x*29,0,SH.y*29);PHG.rotation.y=M
 mesh(G.c,stoneM,[0,.15,0],[3.2,.3,2.2],PHG);
 [-2.4,2.4].forEach(x=>{mesh(G.c,woodL,[x,2.4,0],[.2,4.6,.2],PHG)});
 mesh(G.b,woodL,[0,4.7,0],[5.4,.3,.3],PHG);mesh(G.b,woodL,[0,.5,0],[5.0,.2,.2],PHG);
-const phTex=canvasTex(512,128,(g)=>{g.fillStyle='#3a2418';g.fillRect(0,0,512,128);g.fillStyle='#e8c46a';g.font='700 56px Paperlogy, "Gowun Batang", serif';g.textAlign='center';g.textBaseline='middle';g.fillText('약속산 정상 · 1,027m',256,66)});
-[1,-1].forEach(sd=>{const f=mesh(new THREE.PlaneGeometry(3.6,.9),new THREE.MeshBasicMaterial({map:phTex,toneMapped:false}),[0,5.35,.04*sd],[1,1,1],PHG,false);if(sd<0)f.rotation.y=Math.PI});
+const phTex=canvasTex(1024,256,(g)=>{g.fillStyle='#3a2418';g.fillRect(0,0,1024,256);g.strokeStyle='#e8c46a';g.lineWidth=6;g.strokeRect(14,14,996,228);g.fillStyle='#e8c46a';g.textAlign='center';g.textBaseline='middle';/* v16c: 팻말 안에 맞게 글자 크기 자동 조절 */let fs=112;const T='약속산 정상 · 1,027m';do{g.font='700 '+fs+'px Paperlogy, "Gowun Batang", serif';fs-=4}while(g.measureText(T).width>860&&fs>40);g.fillText(T,512,134)});
+[1,-1].forEach(sd=>{const f=mesh(new THREE.PlaneGeometry(4.4,1.1),new THREE.MeshBasicMaterial({map:phTex,toneMapped:false}),[0,5.45,.04*sd],[1,1,1],PHG,false);if(sd<0)f.rotation.y=Math.PI});
 PHG.updateMatrixWorld(true);
 const PH={stand:PHG.localToWorld(new THREE.Vector3(-1.6,0,.4)),stand2:PHG.localToWorld(new THREE.Vector3(1.6,0,.4)),cam:PHG.localToWorld(new THREE.Vector3(0,2.2,9)),ry:PHG.rotation.y};
 PH.look=new THREE.Vector3(PH.cam.x+SH.x*100,PH.cam.y+3.5,PH.cam.z+SH.y*100);
@@ -1738,20 +1738,20 @@ const waves=[];
 let _bellLast=0;
 function bellSound(v=1,big=false){try{audioInit();const ctx=AU.ctx;if(!ctx||!AU.on||!AU.master)return;if(ctx.state==='suspended')ctx.resume();
   const now=performance.now();if(!big&&now-_bellLast<120)v*=.5;_bellLast=now;
-  const t=ctx.currentTime+.01,mg=ctx.createGain();mg.gain.value=.4*v;
-  if(!AU.bellComp){const c=ctx.createDynamicsCompressor();c.threshold.value=-14;c.ratio.value=4;c.connect(AU.master);
-    const d=ctx.createDelay(1),fb=ctx.createGain(),lp=ctx.createBiquadFilter(),wet=ctx.createGain();d.delayTime.value=.23;fb.gain.value=.42;lp.type='lowpass';lp.frequency.value=900;wet.gain.value=.35;
+  const t=ctx.currentTime+.01,mg=ctx.createGain();mg.gain.value=.8*v;
+  if(!AU.bellComp){const c=ctx.createDynamicsCompressor();c.threshold.value=-9;c.ratio.value=12;c.knee.value=6;c.attack.value=.003;c.release.value=.4;c.connect(AU.master);
+    const d=ctx.createDelay(1),fb=ctx.createGain(),lp=ctx.createBiquadFilter(),wet=ctx.createGain();d.delayTime.value=.31;fb.gain.value=.55;lp.type='lowpass';lp.frequency.value=700;wet.gain.value=.5;
     d.connect(lp);lp.connect(fb);fb.connect(d);lp.connect(wet);wet.connect(c);AU.bellComp=c;AU.bellVerb=d}
   mg.connect(AU.bellComp);mg.connect(AU.bellVerb);
-  const L=big?14:9;
+  const L=big?18:12;
   /* 맥놀이: 아주 가까운 두 저음이 '우우웅' 하고 울렁이게 */
-  [[64,1,L],[64.6,.9,L],[128.3,.55,L*.8],[171,.3,L*.6],[257,.22,L*.45],[346,.14,L*.35],[523,.08,2.4],[812,.05,1.4],[1190,.03,.8]].forEach(([f,a,d])=>{
+  [[49,1,L],[49.45,.95,L],[64,.8,L*.95],[64.6,.7,L*.95],[98.2,.6,L*.85],[128.3,.5,L*.75],[171,.3,L*.6],[257,.22,L*.45],[346,.14,L*.35],[523,.08,2.4],[812,.05,1.4]].forEach(([f,a,d])=>{
     const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;
     g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(a,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(mg);o.start(t);o.stop(t+d+.1)});
   /* 당목이 종을 치는 '둥' 타격 */
   const n=Math.floor(ctx.sampleRate*.25),b=ctx.createBuffer(1,n,ctx.sampleRate),dd=b.getChannelData(0);for(let i=0;i<n;i++)dd[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);
-  const s=ctx.createBufferSource(),lp=ctx.createBiquadFilter(),ng=ctx.createGain();s.buffer=b;lp.type='lowpass';lp.frequency.value=320;ng.gain.value=1.1;s.connect(lp);lp.connect(ng);ng.connect(mg);s.start(t);
-  const k=ctx.createOscillator(),kg=ctx.createGain();k.type='sine';k.frequency.setValueAtTime(110,t);k.frequency.exponentialRampToValueAtTime(48,t+.35);kg.gain.setValueAtTime(.9,t);kg.gain.exponentialRampToValueAtTime(.0001,t+.5);k.connect(kg);kg.connect(mg);k.start(t);k.stop(t+.55)
+  const s=ctx.createBufferSource(),lp=ctx.createBiquadFilter(),ng=ctx.createGain();s.buffer=b;lp.type='lowpass';lp.frequency.value=260;ng.gain.value=1.6;s.connect(lp);lp.connect(ng);ng.connect(mg);s.start(t);
+  const k=ctx.createOscillator(),kg=ctx.createGain();k.type='sine';k.frequency.setValueAtTime(95,t);k.frequency.exponentialRampToValueAtTime(40,t+.45);kg.gain.setValueAtTime(1.3,t);kg.gain.exponentialRampToValueAtTime(.0001,t+.5);k.connect(kg);kg.connect(mg);k.start(t);k.stop(t+.55)
 }catch(e){}}
 function strike(){if(strikeT>=0)return;strikeT=0;strikeHit=false}
 function onHit(){bellSound();bellSway=1;const c=bellG.getWorldPosition(new THREE.Vector3());c.y-=2.6;
@@ -1882,7 +1882,10 @@ function poiAct(k){const p=POIS[k],t=curTask();{const lk=reqLocked(k);if(lk)retu
   const bonus=({pav:1,palm:1,statue:done[1],tree:done[2]&&GS.cookie,tower:GS.stones>=1,board:GS.bell,photo:done[4]&&GS.invited})[k];return p.icon+' '+(bonus?'(보너스) ':'')+p.act}
 function joinFriend(){friendJoined=true;wbubble(friend.head,'왔구나! 같이 올라가자 ⛰️');$('#party').textContent='👥 '+friendName+'님과 함께 오르는 중';
   friendLabel=label('친구 · '+friendName,{bg:'rgba(201,164,58,.95)',fg:'#fff',scale:.4});scene.add(friendLabel);
-  pushTick(nick+'님과 '+friendName+'님이 함께 출발했어요');markDone(0)}
+  pushTick(nick+'님과 '+friendName+'님이 함께 출발했어요');markDone(0);
+  /* v16c: 동행 출발이 눈에 보이게 — 효과음·반짝임·한 줄 알림 */
+  try{sfxClear(0)}catch(e){}try{const sp=screenOf(friend.head.getWorldPosition(new THREE.Vector3()));burst(['🤝','✨','⛰️','✨'],sp.x,sp.y,{dy:70,spread:160})}catch(e){}
+  tnote({ico:'👥',title:'동행 출발!',s1:friendName+'님과 함께 올라가요',s3:'켜진 등불 3개 이어받기',ms:2600})}
 function interact(){if(sitting){standUp();return}if(!nearPoi)return;const k=nearPoi;
   if(k.startsWith('bench')){sitDown(+k.split(':')[1]);return}
   if(k.startsWith('lamp')){gameLampAct(+k.split(':')[1]);return}if(k.startsWith('npc')){gameNpcAct(+k.split(':')[1]);return}if(k==='plaza'){gamePlaza();return}{const lk=reqLocked(k);if(lk){promySay('먼저 「'+lk.txt+'」를 해 주세요. 순서대로 하면 길이 이어져요','near',3600,'fb');return}}
@@ -1938,6 +1941,7 @@ function audioInit(){if(AU.ctx)return;try{AU.ctx=new (window.AudioContext||windo
   {const wl=ctx.sampleRate*2,wb=ctx.createBuffer(1,wl,ctx.sampleRate),wd=wb.getChannelData(0);for(let i=0;i<wl;i++)wd[i]=Math.random()*2-1;
    const s=ctx.createBufferSource();s.buffer=wb;s.loop=true;const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=3400;bp.Q.value=.7;
    const hp=ctx.createBiquadFilter();hp.type='highpass';hp.frequency.value=1600;const g=ctx.createGain();g.gain.value=0;s.connect(bp);bp.connect(hp);hp.connect(g);g.connect(AU.master);s.start();AU.leaf={g,bp,gust:0,gv:0}}
+  /* v16c: 바람·잡음 소리 제거(상은님 지시) */try{AU.leaf.g.disconnect();AU.crowd.g.disconnect()}catch(e){}
   // 배경음악 버스 + 산 울림(합성 잔향)
   {AU.mus=ctx.createGain();AU.mus.gain.value=0;const rv=ctx.createConvolver(),il=Math.floor(ctx.sampleRate*3.4),ib=ctx.createBuffer(2,il,ctx.sampleRate);
    for(let c=0;c<2;c++){const d2=ib.getChannelData(c);for(let i=0;i<il;i++)d2[i]=(Math.random()*2-1)*Math.pow(1-i/il,2.8)}rv.buffer=ib;
@@ -2095,9 +2099,9 @@ const PATHL=[0];for(let i=1;i<PATH.length;i++)PATHL.push(PATHL[i-1]+Math.hypot(P
 function pathIdx(x,z){let bi=0,bd=1e18;for(let i=0;i<PATH.length;i+=4){const d=(PATH[i].x-x)**2+(PATH[i].z-z)**2;if(d<bd){bd=d;bi=i}}
   for(let i=Math.max(0,bi-4);i<=Math.min(PATH.length-1,bi+4);i++){const d=(PATH[i].x-x)**2+(PATH[i].z-z)**2;if(d<bd){bd=d;bi=i}}return bi}
 var camManual=0;let curWP=null;const ROUTE=[];
-const GUIDE_N=48,GUIDE_SP=4.4;
+const GUIDE_N=60,GUIDE_SP=3.2;
 const guideGeo=new THREE.BufferGeometry();guideGeo.setAttribute('position',new THREE.Float32BufferAttribute([0,0,1.1,-.8,0,-.6,0,0,-.05,0,0,1.1,0,0,-.05,.8,0,-.6],3));
-const guideIM=new THREE.InstancedMesh(guideGeo,new THREE.MeshBasicMaterial({color:'#ffd21f',transparent:true,opacity:.95,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,fog:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}),GUIDE_N);
+const guideIM=new THREE.InstancedMesh(guideGeo,new THREE.MeshBasicMaterial({color:'#ffd21f',transparent:true,opacity:.9,depthWrite:false,depthTest:false,side:THREE.DoubleSide,toneMapped:false,fog:false}),GUIDE_N);
 guideIM.frustumCulled=false;guideIM.renderOrder=9;guideIM.visible=false;scene.add(guideIM);
 const _gM=new THREE.Matrix4(),_gQ=new THREE.Quaternion(),_gP=new THREE.Vector3(),_gS=new THREE.Vector3(2.0,1,2.1),_gUp=new THREE.Vector3(0,1,0),_gTilt=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),-.85);
 function updRoute(g,t){
@@ -2108,9 +2112,9 @@ function updRoute(g,t){
   R.push({x:g.x,z:g.z});
   curWP=R[R.length-1];for(let i=1;i<R.length;i++){if(Math.hypot(R[i].x-pos.x,R[i].z-pos.z)>5.5){curWP=R[i];break}}
   let tot=0;for(let i=0;i<R.length-1;i++)tot+=Math.hypot(R[i+1].x-R[i].x,R[i+1].z-R[i].z);
-  let n=0,acc=0,next=2.8+((t*2.4)%GUIDE_SP);
+  let n=0,acc=0,next=3.4+((t*2.4)%GUIDE_SP);
   for(let i=0;i<R.length-1&&n<GUIDE_N;i++){const dx=R[i+1].x-R[i].x,dz=R[i+1].z-R[i].z,L=Math.hypot(dx,dz);if(L<1e-4)continue;const ux=dx/L,uz=dz/L;
-    while(next<acc+L&&n<GUIDE_N&&next<tot-2.6){const q=next-acc,x=R[i].x+ux*q,z=R[i].z+uz*q;
+    while(next<acc+L&&n<GUIDE_N&&next<tot-2.2){const q=next-acc,x=R[i].x+ux*q,z=R[i].z+uz*q;
       _gP.set(x,Math.max(Hc(x,z),Hc(x+ux*.9,z+uz*.9),Hc(x-ux*.9,z-uz*.9))+.5,z);_gQ.setFromAxisAngle(_gUp,Math.atan2(ux,uz)).multiply(_gTilt);_gM.compose(_gP,_gQ,_gS);guideIM.setMatrixAt(n++,_gM);next+=GUIDE_SP}
     acc+=L}
   guideIM.count=n;guideIM.instanceMatrix.needsUpdate=true;guideIM.visible=n>0}
@@ -2215,6 +2219,11 @@ const NICKS2=['달빛고래','새벽여우','솔바람','한결','아침이슬',
 const WHOK={me:'나 자신',family:'가족',friend:'친구',love:'연인',work:'동료',pet:'반려동물'};
 const EX={safety:['횡단보도 앞에서 3초 멈추기','운전할 땐 휴대폰 안 보기','안전벨트 먼저 매기'],health:['점심 먹고 10분 걷기','일주일에 두 번 산에 오르기','하루 물 여섯 잔 마시기'],love:['부모님께 주 1회 전화하기','하루 한 번 고맙다고 말하기','주말엔 같이 산책하기']};
 const EX_ALL=[].concat(EX.safety,EX.health,EX.love);
+/* v16c: 추천 약속 = 약속 종류(안전·건강·사랑) × 함께하는 사람 */
+const EXW={
+ safety:{me:['횡단보도 앞에서 3초 멈추기','운전할 땐 휴대폰 안 보기','집 소화기 위치 확인하기'],family:['가족 모두 안전벨트 먼저 매기','집에 소화기·연기 감지기 두기','아이 등하굣길 함께 걸어 보기'],friend:['자전거 탈 땐 꼭 헬멧 쓰기','술 마신 날엔 택시 타기','서로 졸음운전 챙겨 주기'],love:['데이트 길엔 과속하지 않기','도착하면 잘 왔다고 연락하기','밤길엔 집 앞까지 데려다주기'],work:['출퇴근길 걸으며 휴대폰 안 보기','회사 비상구 위치 함께 확인하기','동료 졸음운전 말리기'],pet:['산책할 땐 목줄 꼭 하기','차 안에 혼자 두지 않기','밤 산책엔 반짝이 목줄 하기']},
+ health:{me:['점심 먹고 10분 걷기','하루 물 여섯 잔 마시기','밤 12시 전에 잠들기'],family:['부모님과 건강검진 같이 받기','저녁 먹고 가족 산책하기','주말엔 같이 집밥 해 먹기'],friend:['일주일에 두 번 같이 운동하기','한 달에 한 번 같이 산 오르기','야식 대신 같이 걷기'],love:['주말엔 같이 산책하기','엘리베이터 대신 같이 계단 오르기','서로 영양제 챙겨 주기'],work:['점심 먹고 동료와 10분 걷기','오후 3시엔 다 같이 스트레칭','회식은 1차까지만'],pet:['하루 두 번 산책하기','반려동물 건강검진 챙기기','공원 한 바퀴 더 돌기']},
+ love:{me:['하루 한 번 나를 칭찬하기','한 달에 하루는 나를 위해 쉬기','하루 10분 일기 쓰기'],family:['부모님께 주 1회 전화하기','하루 한 번 고맙다고 말하기','가족 생일 꼭 챙기기'],friend:['한 달에 한 번 먼저 연락하기','친구 이야기 끝까지 들어 주기','좋은 일엔 가장 먼저 축하하기'],love:['하루 한 번 사랑한다고 말하기','다퉈도 그날 안에 화해하기','기념일엔 손편지 쓰기'],work:['동료에게 먼저 인사하기','고마운 일엔 바로 고맙다고 말하기','힘든 동료에게 커피 한 잔 건네기'],pet:['매일 10분은 온전히 놀아 주기','이름 불러 주며 쓰다듬기','끝까지 함께하기']}};
 const WISHES2=['올해도 같이 아프지 않고 걷기','매일 안부 한 번씩 묻기','서로 먼저 고맙다고 말하기','건강검진 같이 받기','운전할 땐 서로 졸음 챙기기','주말엔 같이 산책하기'];
 const withFmt=(who,t)=>{const w=WHOK[who]||'친구';const c=w.charCodeAt(w.length-1)-0xAC00;return w+(c>=0&&c<11172&&c%28?'과':'와')+' 함께, '+t};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -2353,7 +2362,7 @@ function bellTick(){if(!BG.on){BG.ringP=null;return}if(!$('#mBell').classList.co
   BG.b.forEach((b,k)=>{if(!b.said&&now>=b.t-BG.iv*.5){b.said=true;bellSay(BG.prac?'연습! 곧 와요…':BEAT_WORDS[k]+'!')}
     if(!b.hit&&!b.miss&&now>b.t+430){b.miss=true;bfb('놓쳤어요','bad')}
     if(!BG.prac)BG.mates.forEach((m,j)=>{if(!b.fired[j]&&now>=b.t+m.off){b.fired[j]=true;BG.reso=Math.min(100,BG.reso+8/3);const e=$('#mate'+j);if(e){e.classList.add('on');setTimeout(()=>e.classList.remove('on'),260)}
-      bellFx(.4);const hi=BG.hold?BG.hold.findIndex(x=>x===BG.mates[j].h):-1;if(hi>=0)pull(hi)}});
+      bellFx(.6);const hi=BG.hold?BG.hold.findIndex(x=>x===BG.mates[j].h):-1;if(hi>=0)pull(hi)}});
     if(!cur&&now<b.t+300)cur=b});
   const r=$('#bRing');if(cur&&(now>=cur.t-1000||window.__ringP!=null)){const p=window.__ringP!=null?window.__ringP:Math.min(1,1-(cur.t-now)/1000),op=p<1?.3+.7*p:Math.max(0,1-(now-cur.t)/300);r.style.transform=`scale(${2.1-1.1*Math.min(1,p)})`;r.style.opacity=op;BG.ringP={s:2.1-1.1*Math.min(1,p),o:op}}else{r.style.opacity=0;BG.ringP=null}
   $('#rFill').style.width=BG.reso+'%';$('#rTxt').textContent=BG.prac?'연습 중 · 점수에 들어가지 않아요':'종소리 크기 '+Math.round(BG.reso)+'% · 빨간 선(100%)이 목표';
@@ -2378,7 +2387,7 @@ function bellHit(){if(!BG.on)return;BG.inputs=(BG.inputs||0)+1;const now=perform
 $('#bHit').addEventListener('pointerdown',e=>{e.preventDefault();bellHit()});$('#bPad').addEventListener('pointerdown',e=>{e.preventDefault();bellHit()});
 $('#bRetry').onclick=()=>{BG.on=false;BG.intro=false;$('#bIntro').hidden=true;uiBlock=false;releaseHold();startBellGame()};
 addEventListener('keydown',e=>{if(BG.intro&&(e.code==='KeyE'||e.code==='Space')){e.preventDefault();if(!e.repeat&&performance.now()-(BG.introAt||0)>500)beginBell();return}if(BG.on&&(e.code==='KeyE'||e.code==='Space')){e.preventDefault();bellHit()}});
-function bellSuccess(){bellSound(1.3,true);setTimeout(()=>sfxClear(0),900);promyCelebrate();BG.on=false;const first=!GS.bell;GS.bell=true;if(first)worldAdd();$('#mBell').classList.remove('show');bfb('');
+function bellSuccess(){bellSound(1.5,true);setTimeout(()=>sfxClear(0),900);promyCelebrate();BG.on=false;const first=!GS.bell;GS.bell=true;if(first)worldAdd();$('#mBell').classList.remove('show');bfb('');
   bigPop({ico:'🔔',title:'종이 울렸어요!',s1:first?'받은 보상 · 🔖 도장 1 · 🌡 약속 온도 +5':'함께 친 종소리가 산에 퍼졌어요',s2:'함께 치는 사람들과 박자가 딱 맞았어요',s3:'다음 할 일 · 내 돌 1개 올리기',tone:'win',ms:3200});{const _m=MIS.find(x=>x.t.st==='협동 타종');if(_m)mSeen.add(_m)}burst(['🔔','✨','💛','🎉','✨'],innerWidth/2,innerHeight*.4,{dy:60,spread:300});setTimeout(releaseHold,14000);
   setTimeout(()=>promySay('함께 친 종이에요. 소리가 산 아래 등불까지 닿았어요','ringer',5200),800);startCountdown(true)}
 
@@ -2386,19 +2395,16 @@ function bellSuccess(){bellSound(1.3,true);setTimeout(()=>sfxClear(0),900);promy
 const lampTgt=mode=>{let b=null,bd=1e9;for(const l of LAMPS){if(mode==='read'?(!l.lit||l.mine||l.read):l.lit)continue;const d=mode==='read'?l.s*1000+Math.hypot(pos.x-l.x,pos.z-l.z)*.01:l.s*1000;if(d<bd){bd=d;b=l}}return b&&{x:b.x,z:b.z}};
 const poiT=k=>()=>({x:POIS[k].ix,z:POIS[k].iz});
 const QS=[
- {t:'입구 · 약속 걸기',d:'친구와 출발 · 앞 등불 이어받기',stage:0,give:['gate','어서 와요. 이 길의 등불은 먼저 오른 분들이 켰어요. 친구와 출발해서 등불을 이어받아 봐요'],fin:['guide','약속이 길에 걸렸어요. 이제 위쪽 꺼진 등불은 {nick} 님 차례예요'],
+ {t:'입구 · 약속 걸기',d:'친구와 출발 · 약속 걸기',stage:0,give:['gate','어서 와요! 친구와 함께 출발해서, 약속 프로미에게 올해 약속을 걸어 봐요'],fin:['guide','약속이 길에 걸렸어요. 이제 소원 나무로 올라가요'],
   tasks:[{txt:'동행 1명과 함께 출발하기',do:'입구 친구에게 다가가 E 또는 더블클릭',e:'동행 1명과 함께 출발하기',poi:'gate',rw:'🔖 도장 1 · 동행 1',st:'동행 출발',ok:()=>friendJoined,tgt:poiT('gate')},
-   {txt:'등불 3개 이어받기',do:'켜진 등불 가까이 걸어가면 자동으로 이어받아요',rw:'🔖 도장 1 · 이어받은 등불 3',st:'등불 이어받기',unit:'이어받은 등불',prog:()=>[Math.min(GS.inh,3),3],ok:()=>GS.inh>=3,tgt:()=>lampTgt('read')},
    {txt:'약속 1줄 걸기',do:'약속 프로미 앞에서 E, 한 줄 적고 걸기',e:'약속 1줄 걸기',poi:'statue',rw:'🔖 도장 1 · 모두의 해 +1',st:'약속 걸기',ok:()=>done[1],tgt:poiT('statue')}],
-  extra:[{txt:'앞 사람 등불 1개에 응원 보내기',do:'켜진 등불 앞에서 E (응원 보내기)',rw:'🔖 도장 1 · 약속 온도 +1',st:'등불 응원',ok:()=>GS.cheerLamp>=1}]},
- {t:'소원 나무',d:'꺼진 등불 켜기 · 소원지와 쿠키',stage:2,give:['guide','꺼진 등불을 3개만 켜 봐요. 켜고 나면 소원 나무로 올라가요'],fin:['near','소원이 나무에 걸렸어요. 다른 분들 소원도 읽어 주셨네요'],
-  tasks:[{txt:'꺼진 등불 3개 켜기',do:'꺼진 등불 가까이에서 E 또는 더블클릭',rw:'🔖 도장 1 · 약속 등불 3 · 모두의 해 +3',st:'내 등불 3개',unit:'내 등불',prog:()=>[Math.min(GS.lit,3),3],ok:()=>GS.lit>=3,tgt:()=>lampTgt('off')},
-   {txt:'소원지 걸고 쿠키 열기',do:'소원 나무 앞에서 E, 소원 카드를 눌러 걸고 쿠키 누르기',e:'소원지 걸고 쿠키 열기',poi:'tree',rw:'🔖 도장 1 · 새해 응원 · EVENT 1 조건',st:'소원지·쿠키',unit:'소원지·쿠키',prog:()=>[(done[2]?1:0)+(GS.cookie?1:0),2],ok:()=>!!done[2]&&!!GS.cookie,tgt:poiT('tree')}],
-  extra:[{txt:'다른 사람 소원지에 응원하기',do:'소원 나무 앞에서 E, 「♡ 응원하기」 누르기',rw:'🔖 도장 1 · 약속 온도 +1',st:'소원지 응원',ok:()=>GS.cheerWish>=1},{txt:'꺼진 등불 12개 모두 켜기',do:'남은 꺼진 등불을 켠다',rw:'🔖 도장 1 · 약속 등불 12',st:'등불 12개',ok:()=>GS.lit>=12}]},
- {t:'약속의 광장',d:'협동 타종 · 함께 쌓는 돌탑',stage:3,give:['ringer','광장 종은 혼자 칠 수 없어요. 동행과 박자를 맞춰 주세요. 박자는 제가 셀게요'],fin:['near','종소리가 산 아래 등불까지 닿았어요. 돌탑에 내 돌도 올렸네요'],
-  tasks:[{txt:'동행과 종 8번 치기',do:'종각 앞에서 E, 링이 흰 원에 겹칠 때 E 또는 스페이스',e:'동행과 종 8번 치기',poi:'board',rw:'🔖 도장 1 · 약속 온도 +5',st:'협동 타종',ok:()=>GS.bell,tgt:poiT('board')},
-   {txt:'내 돌 1개 올리기',do:'돌탑 앞에서 E 또는 더블클릭 (등불 수만큼 더 올릴 수 있어요)',e:()=>`내 돌 1개 올리기 (지금 ${GS.stones}개 · 최대 ${GS.lit}개)`,poi:'tower',rw:'🔖 도장 1 · 우리 돌탑 +1',st:'내 돌 올리기',unit:'내 돌 목표',prog:()=>[Math.min(GS.stones,1),1],ok:()=>GS.stones>=1,tgt:poiT('tower')}],
-  extra:[{txt:'찻집에서 차 한 잔 받기',do:'찻집 프로미에게 다가가 E',rw:'🔖 도장 1',st:'찻집',ok:()=>GS.tea},{txt:'오늘의 약속 카드 뽑기',do:'약속 카드 정자에서 E, 카드를 눌러 한 장 뽑기',rw:'🔖 도장 1',st:'약속 카드',ok:()=>GS.card},{txt:'벤치에서 새해 인사 나누기',do:'벤치에 앉아 인사 문구를 고른다',rw:'🔖 도장 1',st:'벤치 인사',ok:()=>GS.greet}]},
+  extra:[{txt:'등불 3개 이어받기',do:'켜진 등불 가까이 걸어가면 자동으로 이어받아요',rw:'🔖 도장 1 · 이어받은 등불 3',st:'등불 이어받기',unit:'이어받은 등불',prog:()=>[Math.min(GS.inh,3),3],ok:()=>GS.inh>=3,tgt:()=>lampTgt('read')},{txt:'앞 사람 등불 1개에 응원 보내기',do:'켜진 등불 앞에서 E (응원 보내기)',rw:'🔖 도장 1 · 약속 온도 +1',st:'등불 응원',ok:()=>GS.cheerLamp>=1}]},
+ {t:'소원 나무',d:'소원지와 포춘쿠키',stage:2,give:['guide','소원 나무로 올라가 소원지를 걸고 포춘쿠키를 열어 봐요'],fin:['near','소원이 나무에 걸렸어요. 다른 분들 소원도 읽어 주셨네요'],
+  tasks:[{txt:'소원지 걸고 쿠키 열기',do:'소원 나무 앞에서 E, 소원 카드를 눌러 걸고 쿠키 누르기',e:'소원지 걸고 쿠키 열기',poi:'tree',rw:'🔖 도장 1 · 새해 응원 · EVENT 1 조건',st:'소원지·쿠키',unit:'소원지·쿠키',prog:()=>[(done[2]?1:0)+(GS.cookie?1:0),2],ok:()=>!!done[2]&&!!GS.cookie,tgt:poiT('tree')}],
+  extra:[{txt:'꺼진 등불 3개 켜기',do:'꺼진 등불 가까이에서 E 또는 더블클릭',rw:'🔖 도장 1 · 약속 등불 3 · 모두의 해 +3',st:'내 등불 3개',unit:'내 등불',prog:()=>[Math.min(GS.lit,3),3],ok:()=>GS.lit>=3,tgt:()=>lampTgt('off')},{txt:'다른 사람 소원지에 응원하기',do:'소원 나무 앞에서 E, 「♡ 응원하기」 누르기',rw:'🔖 도장 1 · 약속 온도 +1',st:'소원지 응원',ok:()=>GS.cheerWish>=1},{txt:'꺼진 등불 12개 모두 켜기',do:'남은 꺼진 등불을 켠다',rw:'🔖 도장 1 · 약속 등불 12',st:'등불 12개',ok:()=>GS.lit>=12}]},
+ {t:'약속의 광장',d:'협동 타종',stage:3,give:['ringer','광장 종은 혼자 칠 수 없어요. 동행과 박자를 맞춰 주세요. 박자는 제가 셀게요'],fin:['near','종소리가 산 아래 등불까지 닿았어요'],
+  tasks:[{txt:'동행과 종 8번 치기',do:'종각 앞에서 E, 링이 흰 원에 겹칠 때 E 또는 스페이스',e:'동행과 종 8번 치기',poi:'board',rw:'🔖 도장 1 · 약속 온도 +5',st:'협동 타종',ok:()=>GS.bell,tgt:poiT('board')}],
+  extra:[{txt:'내 돌 1개 올리기',do:'돌탑 앞에서 E 또는 더블클릭 (등불 수만큼 더 올릴 수 있어요)',e:()=>`내 돌 1개 올리기 (지금 ${GS.stones}개 · 최대 ${GS.lit}개)`,poi:'tower',rw:'🔖 도장 1 · 우리 돌탑 +1',st:'내 돌 올리기',unit:'내 돌 목표',prog:()=>[Math.min(GS.stones,1),1],ok:()=>GS.stones>=1,tgt:poiT('tower')},{txt:'찻집에서 차 한 잔 받기',do:'찻집 프로미에게 다가가 E',rw:'🔖 도장 1',st:'찻집',ok:()=>GS.tea},{txt:'오늘의 약속 카드 뽑기',do:'약속 카드 정자에서 E, 카드를 눌러 한 장 뽑기',rw:'🔖 도장 1',st:'약속 카드',ok:()=>GS.card},{txt:'벤치에서 새해 인사 나누기',do:'벤치에 앉아 인사 문구를 고른다',rw:'🔖 도장 1',st:'벤치 인사',ok:()=>GS.greet}]},
  {t:'정상 일출',d:'인증샷 · 일출 초대장',stage:4,give:['photo','해는 혼자 띄울 수 없어요. 인증샷을 남기고, 소중한 분께 초대장을 보내 주세요'],fin:['photo','이 길의 등불은 이제 다음 분이 이어받아요'],
   tasks:[{txt:'일출 인증샷 1장 남기기',do:'포토존 앞에서 E, 3초 뒤 자동으로 찍혀요',e:'일출 인증샷 1장 남기기',poi:'photo',rw:'🔖 도장 1 · EVENT 2 조건',st:'인증샷',ok:()=>done[4],tgt:poiT('photo')},
    {txt:'일출 초대장 1통 보내기',do:'포토존에서 E, 카카오톡 보내기나 링크 복사 누르기',e:'일출 초대장 1통 보내기',poi:'photo',rw:'🔖 도장 1 · 약속 온도 +10',st:'일출 초대장',ok:()=>GS.invited,tgt:poiT('photo')}],
@@ -2563,10 +2569,20 @@ function zoneUpdate(dt,t){let boost=0;const now=performance.now()/1000;
   markBoost=boost;if(arriveUntil&&performance.now()>arriveUntil){arriveUntil=0;$('#goal').classList.remove('arrive')}}
 const _ev=new THREE.Vector3();
 let goalDt=1/60;
-function goalMarkers(t){zoneUpdate(goalDt,t);const g=GS.tgt,el=$('#edgeArrow');const hb=hintUntil>performance.now();el.classList.toggle('blink',hb);
-  if(!g||photoCam||!GS.started||uiBlock){arrowM.visible=arrowRing.visible=false;el.classList.remove('on');curWP=null;guideIM.visible=false;return}
+/* v16c: 발밑 방향 화살표 — 캐릭터 바로 앞 바닥에서 다음 경유지(길을 따라)를 가리킨다. 지형·캐릭터에 가려지지 않게 맨 위에 그린다 */
+const footArrow=(()=>{const sh=new THREE.Shape();sh.moveTo(0,1.5);sh.lineTo(-1.05,.15);sh.lineTo(-.42,.15);sh.lineTo(-.42,-1.1);sh.lineTo(.42,-1.1);sh.lineTo(.42,.15);sh.lineTo(1.05,.15);sh.closePath();
+  const g=new THREE.ShapeGeometry(sh);g.rotateX(-Math.PI/2);g.scale(1,1,-1);
+  const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:'#ffd21f',transparent:true,opacity:.95,depthTest:false,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,fog:false}));
+  const o=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:'#7a4a00',transparent:true,opacity:.55,depthTest:false,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,fog:false}));o.scale.setScalar(1.18);o.position.y=-.01;o.renderOrder=13;
+  m.renderOrder=14;const G=new THREE.Group();G.add(o,m);G.visible=false;G.frustumCulled=false;scene.add(G);return G})();
+function updFootArrow(t,d){const wp=curWP;if(!wp||d<3.2){footArrow.visible=false;return}
+  const dx=wp.x-pos.x,dz=wp.z-pos.z,L=Math.hypot(dx,dz);if(L<.5){footArrow.visible=false;return}
+  const ux=dx/L,uz=dz/L,r=2.2+.35*Math.sin(t*5),x=pos.x+ux*r,z=pos.z+uz*r;
+  footArrow.position.set(x,Hc(x,z)+.35,z);footArrow.rotation.set(0,Math.atan2(ux,uz),0);footArrow.scale.setScalar(1.15);footArrow.visible=true}
+function goalMarkers(t){zoneUpdate(goalDt,t);if(!friendJoined&&GS.started&&!uiBlock&&(!window.__askT||t-window.__askT>7||t<window.__askT)){window.__askT=t;try{wbubble(friend.head,'같이 올라갈래? 나한테 와서 E 눌러 줘! 🤝')}catch(e){}}const g=GS.tgt,el=$('#edgeArrow');const hb=hintUntil>performance.now();el.classList.toggle('blink',hb);
+  if(!g||photoCam||!GS.started||uiBlock){arrowM.visible=arrowRing.visible=false;el.classList.remove('on');curWP=null;guideIM.visible=false;footArrow.visible=false;return}
   updRoute(g,t);
-  const d=Math.hypot(pos.x-g.x,pos.z-g.z),gy=Hc(g.x,g.z),k=Math.min(3.2,Math.max(.45,d/16));
+  const d=Math.hypot(pos.x-g.x,pos.z-g.z),gy=Hc(g.x,g.z),k=Math.min(3.2,Math.max(.45,d/16));updFootArrow(t,d);
   arrowM.visible=arrowRing.visible=d>2.5;if(hb&&Math.sin(t*16)<0)arrowM.visible=arrowRing.visible=false;arrowM.position.set(g.x,gy+7.5*k*.8+Math.abs(Math.sin(t*3.4))*1.6*k,g.z);arrowM.scale.setScalar(k*(1+.4*markBoost*(.8+.2*Math.sin(t*12))));arrowM.rotation.y=t*1.5;
   arrowRing.position.set(g.x,gy+.2,g.z);arrowRing.scale.setScalar((.8+.3*Math.sin(t*3))*(1+.3*markBoost));
   {const wp=curWP||g;_ev.set(wp.x,Hc(wp.x,wp.z)+4,wp.z)}const c=_ev.clone().applyMatrix4(camera.matrixWorldInverse),p=_ev.clone().project(camera),behind=c.z>0;
@@ -2603,7 +2619,7 @@ function gameUpdate(dt,t){
 
 /* ---- 약속 입력: 안전·건강·사랑 + 누구와 함께 ---- */
 function syncPromiseUI(){$$('#pwho .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===draft.who));
-  $('#pex').innerHTML=(EX[draft.cat]||EX.health).map(s=>`<button class="chip ex" type="button">${s}</button>`).join('')}
+  $('#pex').innerHTML=((EXW[draft.cat]&&EXW[draft.cat][draft.who])||EX[draft.cat]||EX.health).map(s=>`<button class="chip ex" type="button">${s}</button>`).join('')}
 $('#pwho').innerHTML=Object.entries(WHO).map(([k,v])=>`<button class="chip" type="button" data-k="${k}">${v}</button>`).join('');
 $('#pwho').onclick=e=>{const b=e.target.closest('.chip');if(b){draft.who=b.dataset.k;syncPromiseUI()}};
 $('#chips').addEventListener('click',syncPromiseUI);

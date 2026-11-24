@@ -407,4 +407,5 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(.05,ck.getDelta())
 window.__t={fullShot:async(id,w=1)=>{const g=await loadAv(id),sc2=new THREE.Scene();sc2.add(new THREE.HemisphereLight(0xfff4e0,0xcfd9a0,1.6));const d=new THREE.DirectionalLight(0xffe2b0,1.6);d.position.set(1,2,3);sc2.add(d);const o=SkeletonUtils.clone(g.scene);sc2.add(o);o.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(o),h=b.max.y-b.min.y,c=b.getCenter(new THREE.Vector3());const cam2=new THREE.PerspectiveCamera(24,.5,.01,100);cam2.position.set(c.x,c.y,c.z+h/2/Math.tan(12*Math.PI/180)*1.1);cam2.lookAt(c);TR.setSize(160,320,false);TR.setClearColor(0xffffff,1);TR.render(sc2,cam2);const u=TR.domElement.toDataURL();TR.setSize(192,192,false);return u},swapMe,pickAv,startAv,openAv,me,promy,ZONES,walkable,route,go:k=>{[me.u,me.v]=[ZK[k].u,ZK[k].v]},walkTo,enter,state:()=>({u:+me.u.toFixed(3),v:+me.v.toFixed(3),cur:cur&&cur.k,leaving,run:me.run||0,runT:+runT.toFixed(2),autoGo:autoGo&&autoGo.k})};
 loop();requestAnimationFrame(()=>{$('#lb').firstElementChild.style.width='100%'});
 setTimeout(()=>{$('#fade').classList.add('off');setTimeout(()=>say(back?'다녀왔군요! 이번엔 어디로 갈까요?':'어서 와요! 노란 이름표를 클릭해 보세요.',5200),500)},1500);
-</script></body></html>
+</script><script src="../assets_promy/bgm.js" data-mood="plaza"></script>
+</body></html>
