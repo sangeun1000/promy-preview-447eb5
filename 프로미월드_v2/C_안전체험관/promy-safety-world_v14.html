@@ -119,7 +119,7 @@ body.mob #mis .r.w{display:none}
 #exitb{position:fixed;z-index:12;top:12px;left:12px;font:inherit;font-size:17px;background:var(--cream);border:3px solid var(--line);border-radius:16px;padding:7px 15px;color:var(--ink);cursor:pointer;box-shadow:0 4px 0 rgba(120,100,160,.25)}
 #exitb:hover{background:#FFF0B8}
 #evb{display:none;position:fixed;z-index:13;left:50%;bottom:132px;transform:translateX(-50%);font:inherit;font-size:19px;background:#FFE680;border:0;border-radius:20px;padding:11px 24px;color:var(--ink);cursor:pointer;box-shadow:0 5px 0 #E8B83A,0 8px 18px rgba(0,0,0,.18)}#evb:hover{background:#FFD23C}
-#bt{position:fixed;z-index:11;left:50%;bottom:3vh;transform:translateX(-50%);width:25vh;height:25vh;min-width:150px;min-height:150px;display:none;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#bt{position:fixed;z-index:11;left:50%;bottom:4vh;transform:translateX(-50%);width:min(860px,90vw);height:calc(min(860px,90vw)*.1953);min-height:110px;display:none;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
 #bt canvas{width:100%;height:100%;display:block;pointer-events:none}
 #btl{position:absolute;left:50%;top:-34px;transform:translateX(-50%);white-space:nowrap;font-size:14px;color:var(--ink2);background:var(--cream);border-radius:14px;padding:3px 12px;box-shadow:0 3px 0 rgba(120,100,160,.2);pointer-events:none}#btl b{color:var(--ink);background:var(--yellow);border-radius:10px;padding:0 7px}
 #btf{position:absolute;left:50%;top:-92px;transform:translateX(-50%);white-space:nowrap;font-family:'Paperlogy','Jua',sans-serif;font-weight:800;font-size:34px;color:#fff;text-shadow:0 3px 0 #3E9B4C,0 0 14px rgba(80,200,90,.7);opacity:0;pointer-events:none}
@@ -248,7 +248,7 @@ body.mob #mis{top:94px}body.mob #gg{left:50%;right:auto;transform:translateX(-50
 <div id="rw" class="card"></div>
 <div id="joy"><i></i></div>
 <button class="mb" id="bE">E</button><button class="mb" id="bC">낮게</button><button class="mb" id="bR">달리기</button>
-<div id="bt"><div id="btl"></div><div id="btf"></div><div id="btm"></div><canvas width="512" height="512"></canvas></div>
+<div id="bt"><div id="btl"></div><div id="btf"></div><div id="btm"></div><canvas width="1024" height="200"></canvas></div>
 <div class="modal" id="lt"><div class="card">
  <h2>✉️ 소방관께 감사 편지</h2><p>받는 사람 · <b>우리 동네 소방관님께</b></p>
  <div class="chips2" id="ltc"></div>
@@ -932,7 +932,7 @@ $('#tunext').onclick=tutNext;$('#tuskip').onclick=tutClose;$('#helpb').onclick=(
 const RULES={
  cross:{ic:'🚸',title:'횡단보도 건너기',steps:[['✋','1단 멈춤'],['👀','2단 저쪽'],['⏱','3초 동안'],['🚶','4고 예방']],rule:'노란 카펫에서 1초 멈추면(저절로 넘어가요), E를 한 번 눌러 좌우를 살피고, 3초를 센 다음, 초록불에 걸어서 건너요.',win:'성공 조건 · 초록불일 때 건너편 노란 카펫까지 걸어가요.'},
  ext:{ic:'🧯',title:'소화기로 불 끄기',steps:[['📍','안전핀'],['🎯','노즐'],['✊','손잡이'],['↔️','좌우 쓸기']],rule:'안전핀 뽑기 → 노즐을 불 쪽으로 → 손잡이 꾹 → 불을 좌우로 쓸어요.',win:'성공 조건 · 좌우로 3번 쓸어서 불을 꺼요.'},
- cpr:{ic:'💓',title:'가슴 누르기 연습',steps:[['🧎','무릎 꿇기'],['🤲','두 손'],['🎵','박자'],['🔁','교대']],rule:'인형 가슴을 박자에 맞춰 눌러요. 줄어드는 링이 안쪽 원에 닿는 순간이 "지금!"이에요.',win:'성공 조건 · 내가 10번 → 동행이 10번 → 다시 내가 5번.'},
+ cpr:{ic:'💓',title:'가슴 누르기 연습',steps:[['🧎','무릎 꿇기'],['🤲','두 손'],['🎵','박자'],['🔁','교대']],rule:'인형 가슴을 박자에 맞춰 눌러요. 오른쪽에서 흘러오는 동그라미가 왼쪽 과녁에 닿는 순간이 "지금!"이에요.',win:'성공 조건 · 내가 10번 → 동행이 10번 → 다시 내가 5번.'},
  smoke:{ic:'💨',title:'연기 복도 낮은 자세로 지나기',steps:[['💨','연기는 위로'],['🧎','몸 낮추기'],['🚪','초록 비상구']],rule:'연기는 위로 올라가요. C 키로 몸을 낮추고 초록 비상구까지 걸어가요.',win:'성공 조건 · 낮은 자세로 비상구까지 가요.'},
  camp:{ic:'⛺',title:'캠핑 안전 점검',steps:[['⛺','환기구 열기'],['🔥','화로 들기'],['🟢','초록 원에 놓기']],rule:'텐트 환기구를 열고, 화로를 텐트 밖 초록 원에 놓아요.',win:'성공 조건 · 환기구 열기 + 화로 밖에 놓기, 둘 다 해요.'},
  letter:{ic:'✉️',title:'소방관께 감사 편지',steps:[['✉️','편지 쓰기'],['🔢','1·2·3 고르기'],['📌','벽에 붙이기']],rule:'감사 한 줄을 골라서 우체통에 넣어요.',win:'성공 조건 · 문장을 하나 고르고 [우체통에 넣기]를 눌러요.'},
@@ -1198,18 +1198,24 @@ function updBeat(){const on=CPR.st>0;if(on!==btShow){btShow=on;BT.style.display=
  const lk=cur+'|'+(CPR.score||0);if(lk!==btLabK){btLabK=lk;const nm=['내 차례 '+CPN[0]+'회','동행 차례 '+CPN[1]+'회','내 차례 '+CPN[2]+'회'];BTL.innerHTML=nm.map((t,i)=>i===cur?'<b>'+t+'</b>':t).join(' › ')+(CPR.score?'  · 점수 '+CPR.score:'')}
  const fx=CPR.fx||{t:-9},k=T-fx.t;let sc=1,sh=0;if(k<.5&&fx.kind!=='miss'&&fx.kind!=='comp')sc=1+.2*Math.exp(-k*10);else if(k<.4&&fx.kind==='comp')sc=1+.08*Math.exp(-k*10);if(fx.kind==='miss'&&k<.25)sh=Math.sin(k*60)*3*(1-k*4);
  BT.style.transform=`translateX(calc(-50% + ${sh.toFixed(1)}px)) scale(${sc.toFixed(3)})`;
- const g=BTG,C=256,RT=118,t0=CPR.t0;g.clearRect(0,0,512,512);
- g.save();g.shadowColor='rgba(90,60,20,.3)';g.shadowBlur=18;g.shadowOffsetY=6;g.fillStyle='rgba(255,247,222,.95)';g.beginPath();g.arc(C,C,246,0,7);g.fill();g.restore();
- g.strokeStyle='#EBD9AF';g.lineWidth=6;g.beginPath();g.arc(C,C,232,0,7);g.stroke();
+ /* v14c: 흘러가는 박자줄 — 동그라미가 오른쪽에서 흘러와 왼쪽 과녁 원에 닿을 때 누른다 */
+ const g=BTG,W=1024,H=200,HX=170,CY=100,SP=330,t0=CPR.t0;g.clearRect(0,0,W,H);
+ g.save();g.shadowColor='rgba(90,60,20,.3)';g.shadowBlur=16;g.shadowOffsetY=5;g.fillStyle='rgba(255,247,222,.96)';rrp(g,8,14,W-16,H-28,86);g.fill();g.restore();
+ g.fillStyle='#F3E3BC';rrp(g,HX,CY-30,W-HX-300,60,30);g.fill();
  let inWin=false;if(me){const i=Math.round((T-t0)/CPR.P);inWin=i>=0&&!CPR.done[i]&&Math.abs(T-(t0+i*CPR.P))<.17}
- if(k<.7&&fx.kind!=='miss'){const u=k/.7;g.strokeStyle=`rgba(76,201,100,${.85*(1-u)})`;g.lineWidth=18*(1-u)+4;g.beginPath();g.arc(C,C,RT+(236-RT)*u,0,7);g.stroke();g.fillStyle=`rgba(120,220,130,${.4*(1-u)})`;g.beginPath();g.arc(C,C,RT,0,7);g.fill()}
- g.strokeStyle=inWin?'#3DBE5A':'#E8A91E';g.lineWidth=inWin?18:12;g.beginPath();g.arc(C,C,RT,0,7);g.stroke();
- if(me||comp){const base=Math.floor((T-t0)/CPR.P)-1;for(let kk=base;kk<base+4;kk++){if(kk<0)continue;if(me&&CPR.done[kk])continue;if(comp&&(kk<CPR.compCnt||kk>=CPN[1]))continue;const dt=t0+kk*CPR.P-T,f=dt/(CPR.P*1.7);if(f>1||dt<-.14)continue;const fr=clamp(f,0,1),al=dt<0?1+dt/.14:1-.45*fr;
-  g.strokeStyle=`rgba(255,${Math.round(138+90*(1-fr))},60,${al})`;g.lineWidth=14;g.beginPath();g.arc(C,C,RT+(230-RT)*fr,0,7);g.stroke()}}
+ if(k<.6&&fx.kind!=='miss'){const u=k/.6;g.strokeStyle=`rgba(76,201,100,${.9*(1-u)})`;g.lineWidth=14*(1-u)+3;g.beginPath();g.arc(HX,CY,46+60*u,0,7);g.stroke();
+  for(let a=0;a<8;a++){const an=a/8*Math.PI*2,r=50+70*u;g.fillStyle=`rgba(255,210,60,${1-u})`;g.beginPath();g.arc(HX+Math.cos(an)*r,CY+Math.sin(an)*r,7*(1-u)+2,0,7);g.fill()}}
+ g.fillStyle=inWin?'rgba(61,190,90,.25)':'rgba(232,169,30,.12)';g.beginPath();g.arc(HX,CY,46,0,7);g.fill();
+ g.strokeStyle=inWin?'#3DBE5A':'#E8A91E';g.lineWidth=inWin?12:8;g.beginPath();g.arc(HX,CY,46,0,7);g.stroke();
+ if(me||comp){const base=Math.floor((T-t0)/CPR.P)-1;let drawn=0;for(let kk=base;kk<base+12;kk++){if(kk<0)continue;if(me&&CPR.done[kk])continue;if(comp&&(kk<CPR.compCnt||kk>=CPN[1]))continue;if(me&&T-(t0+kk*CPR.P)<.17&&drawn++>=need-cnt)continue;
+  const dtt=t0+kk*CPR.P-T,x=HX+dtt*SP;if(x>W-300||dtt<-.2)continue;const al=dtt<0?Math.max(0,1+dtt/.2):Math.min(1,(W-300-x)/60);
+  g.fillStyle=comp?`rgba(140,190,240,${al})`:`rgba(255,${Math.abs(dtt)<.17?150:176},40,${al})`;g.beginPath();g.arc(x,CY,30,0,7);g.fill();g.strokeStyle=`rgba(255,255,255,${al})`;g.lineWidth=5;g.stroke()}}
  g.textAlign='center';g.textBaseline='middle';g.lineJoin='round';
- const L1=me?(inWin?'지금!':'박자에 맞춰'):comp?'동행이 눌러요':'자리 바꾸는 중',big=inWin;
- g.font=`800 ${big?78:40}px ${TFONT}`;g.lineWidth=big?10:0;if(big){g.strokeStyle='#fff';g.strokeText(L1,C,C-44)}g.fillStyle=big?'#D9463A':'#8a7258';g.fillText(L1,C,C-44);
- if(need){g.font=`800 78px ${TFONT}`;g.fillStyle='#5a4636';g.fillText(cnt+'/'+need,C,C+46)}}
+ if(me&&inWin){g.font=`800 46px ${TFONT}`;g.lineWidth=8;g.strokeStyle='#fff';g.strokeText('지금!',HX,CY);g.fillStyle='#D9463A';g.fillText('지금!',HX,CY)}
+ else{g.font=`800 26px ${TFONT}`;g.fillStyle='#8a7258';g.fillText(me?'여기':'',HX,CY)}
+ g.textAlign='right';g.font=`800 52px ${TFONT}`;g.fillStyle='#5a4636';if(need)g.fillText(cnt+'/'+need,W-40,CY-8);
+ g.font=`700 22px ${TFONT}`;g.fillStyle='#8a7258';g.fillText(me?'원이 과녁에 닿을 때 E·Space':comp?'동행이 눌러요':'자리 바꾸는 중',W-40,CY+38)}
+function rrp(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
 function lookAct(){CR.look=.001}
 /* v13: 좌우 살피기가 끝나면 신호를 '빨강 → 곧 초록' 흐름으로 맞춰서, 3초 기다린 뒤 오래 서 있지 않게 한다 */
 function syncCrossSignal(){if(sig.ph==='carYel'||sig.ph==='clear')return;if(sig.ph==='carGo'&&PH[phI][1]-sig.t<=3)return;setPhase(1)}
@@ -1243,7 +1249,7 @@ const CPN=[10,10,5];
 /* v13: 인형(GLB)은 머리가 -z, 가슴 중심은 (-5.98,-17.5), 몸통 폭 x -6.62~-5.35. 나는 서쪽 옆, 동행은 동쪽 옆에 무릎 꿇는다 */
 const CHEST={x:-5.98,z:-17.5},KN={x:-6.88,z:-17.5,yaw:Math.PI/2},KN2={x:-5.08,z:-17.5,yaw:-Math.PI/2},WP={x:CPRM.x-2.6,z:CPRM.z+1.6};
 function cprStart(){if(CPR.st)return;CPR.st=1;CPR.miss=0;CPR.streak=0;CPR.score=0;CPR.fx={t:-9};COMP.task='cprwait';CPR.cnt=0;CPR.done={};CPR.cancel=0;
- autoMove(KN.x,KN.z,2.4,()=>{PL.kneel=true;PL.crouch=false;PL.yaw=KN.yaw;$('#bC').classList.remove('on');CPR.t0=T+1.2;CPR.tickI=-1;toast('줄어드는 링이 안쪽 원에 닿을 때 E 또는 Space! (박자판 클릭도 돼요)',true)},KN.yaw,1)}
+ autoMove(KN.x,KN.z,2.4,()=>{PL.kneel=true;PL.crouch=false;PL.yaw=KN.yaw;$('#bC').classList.remove('on');CPR.t0=T+1.2;CPR.tickI=-1;toast('흘러오는 동그라미가 왼쪽 과녁에 닿을 때 E 또는 Space! (박자줄 클릭도 돼요)',true)},KN.yaw,1)}
 let TAPLOCK=0;function cprStop(){clearStance();TAPLOCK=T+1.5;CPR.st=0;PL.kneel=false;PL.auto=null;COMP.task=null;CPR.compIn=false}
 function squish(m){MAN[m].userData.chest.position.y=.6;if(m===0)mfxT=T}
 const MFX=new THREE.Mesh(new THREE.TorusGeometry(.3,.03,6,32),new THREE.MeshBasicMaterial({color:0x4CC964,transparent:true,opacity:0,depthWrite:false}));MFX.rotation.x=Math.PI/2;MFX.visible=false;scene.add(MFX);let mfxT=-9;
@@ -1253,7 +1259,7 @@ function updCpr(dt,presses){updMfx();const man=MAN[0].userData.chest;man.positio
  const me=(CPR.st===1||CPR.st===5)&&PL.kneel;
  if(me){const idx=Math.floor((T-CPR.t0)/CPR.P);if(idx!==CPR.tickI&&idx>=0){CPR.tickI=idx;idx%2?sfx(430,.07,'triangle',.05):sfx(760,.04,'square',.035)}
   let pr=presses;if(AUTOBEAT){const i0=Math.round((T-CPR.t0)/CPR.P);if(i0>=0&&!CPR.done[i0]&&Math.abs(T-(CPR.t0+i0*CPR.P))<.05)pr++}
-  for(let k=0;k<pr;k++){const i=Math.round((T-CPR.t0)/CPR.P),d=T-(CPR.t0+i*CPR.P);if(i>=0&&Math.abs(d)<.17&&!CPR.done[i]){CPR.done[i]=true;CPR.cnt++;PL.pose.press=1;squish(0);cprHit(d)}else{cprMissFx(d);if(++CPR.miss>=12){showFail('cpr','박자가 자꾸 어긋났어요(너무 빨리 또는 늦게 눌렀어요). 줄어드는 링이 안쪽 원에 닿는 "지금!"에만 눌러요.',cprStart);cprStop();break}}}
+  for(let k=0;k<pr;k++){const i=Math.round((T-CPR.t0)/CPR.P),d=T-(CPR.t0+i*CPR.P);if(i>=0&&Math.abs(d)<.17&&!CPR.done[i]){CPR.done[i]=true;CPR.cnt++;PL.pose.press=1;squish(0);cprHit(d)}else{cprMissFx(d);if(++CPR.miss>=12){showFail('cpr','박자가 자꾸 어긋났어요(너무 빨리 또는 늦게 눌렀어요). 흘러오는 동그라미가 왼쪽 과녁에 닿는 "지금!"에만 눌러요.',cprStart);cprStop();break}}}
   const need=CPR.st===1?CPN[0]:CPN[2];
   if(CPR.cnt>=need){if(CPR.st===1){CPR.st=2;PL.kneel=false;PRM.living.lb.say('교대!',2200);toast('교대! 동행이 이어서 눌러요',true);COMP.task='cprdo';autoMove(WP.x,WP.z,2.2,()=>{CPR.st=3;},Math.PI*.9,1);CPR.compCnt=0;CPR.t0=T+3}else{cprFinish()}}
   const mv=Math.hypot((K.KeyD||K.ArrowRight?1:0)-(K.KeyA||K.ArrowLeft?1:0)+JOY.x,(K.KeyW||K.ArrowUp?1:0)-(K.KeyS||K.ArrowDown?1:0)+JOY.y);
@@ -1341,7 +1347,7 @@ function taskLines(g,near){const id=g.id,far='노란 화살표를 따라 걸어�
   if(!EXT.held)return near?['소화기를 들어요',H+act]:['소화기 받침대로 가요',H+far];
   return near?[['1단계 안전핀을 뽑아요','2단계 노즐을 불 쪽으로 돌려요','3단계 손잡이를 움켜쥐어요'][Math.min(2,EXT.step)],H+act]:['소화기를 들고 화덕 앞 노란 원으로 가요',H+far];
  case'cpr':
-  if((CPR.st===1||CPR.st===5)&&PL.kneel)return[`박자에 맞춰 눌러요 (남은 ${(CPR.st===1?CPN[0]:CPN[2])-CPR.cnt}번)`,H+'줄어드는 링이 안쪽 원에 닿는 "지금!"에 E 또는 Space (화면 클릭도 돼요)'];
+  if((CPR.st===1||CPR.st===5)&&PL.kneel)return[`박자에 맞춰 눌러요 (남은 ${(CPR.st===1?CPN[0]:CPN[2])-CPR.cnt}번)`,H+'흘러오는 동그라미가 왼쪽 과녁에 닿는 "지금!"에 E 또는 Space (화면 클릭도 돼요)'];
   if(CPR.st===0)return near?['가슴 누르기 연습을 시작해요',H+act]:['응급처치 인형으로 가요',H+far];
   return['동행과 번갈아 해요',H+'동행이 누르는 동안 가만히 기다려요'];
  case'flag':
@@ -1518,7 +1524,7 @@ function updStrip(){
  if(CPR.st){strip(null);return}
  if(false){const lab=['내 차례 '+CPN[0]+'회','교대: 동행 '+CPN[1]+'회','내 차례 '+CPN[2]+'회'],cur=CPR.st<=1?0:CPR.st<=4?1:2;
   const cnt=CPR.st<=1?CPR.cnt+'/'+CPN[0]:CPR.st===5?CPR.cnt+'/'+CPN[2]:CPR.st===3?CPR.compCnt+'/'+CPN[1]:'';
-  strip('cpr',chipsH(lab,cur),(CPR.st===1||CPR.st===5)?`남은 ${(CPR.st===1?CPN[0]:CPN[2])-CPR.cnt}번 · 줄어드는 링이 안쪽 원에 닿는 "지금!"에 E 또는 Space  ${CPR.msg||''}`:CPR.st===3?`동행이 누르는 중이에요 ${cnt}`:'자리를 바꾸는 중…');return}
+  strip('cpr',chipsH(lab,cur),(CPR.st===1||CPR.st===5)?`남은 ${(CPR.st===1?CPN[0]:CPN[2])-CPR.cnt}번 · 흘러오는 동그라미가 왼쪽 과녁에 닿는 "지금!"에 E 또는 Space  ${CPR.msg||''}`:CPR.st===3?`동행이 누르는 중이에요 ${cnt}`:'자리를 바꾸는 중…');return}
  if(EXT.held){strip('chips',chipsH(['1 안전핀 뽑기','2 노즐을 불 쪽으로','3 손잡이 움켜쥐기','4 빗자루로 쓸듯 좌우로'],EXT.step),EXT.step<3?'화덕 앞 노란 원에 서서 E':`A·D 또는 ←·→ 로 좌우로 쓸어요 · 남은 ${3-Math.min(3,Math.floor(EXT.acc/2.6))}번`);return}
  if(FLG.st){strip('chips',chipsH(['내 깃발 들기','동행 깃발 들기','아이들이 건너요'],FLG.st===1?1:2),FLG.st===1?'동행이 반대쪽 깃발 앞으로 가는 중…':`아이들이 건너는 중 ${FLG.kids.size}/2`);return}
  if(CR.step>0||(onRect(NEARC,.3)&&!doneM('cross'))){const h=CR.step===0?'노란 카펫에 서서 멈춰요':CR.step===1?'E를 한 번 눌러 좌우를 살펴요 (0/1)':CR.step===2?`3초 세는 중 ${Math.max(0,3-CR.t3).toFixed(1)}`:(sig.ped?'초록불! 걸어서 건너요':'초록불이 될 때까지 기다려요');
