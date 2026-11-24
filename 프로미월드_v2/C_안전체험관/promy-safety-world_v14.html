@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>프로미 안전체험관 — 걸어 다니는 3D 월드 v14</title>
+<title>프로미 안전체험관 · 함께 쌓는 첫 약속</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <script>/* SLANT-BANG: '!'가 들어간 문구는 모두 기울임(세 월드 공통) */
 (function(){var RE=/[!！]/,K=-0.21;
@@ -242,7 +242,7 @@ body.mob #mis{top:94px}body.mob #gg{left:50%;right:auto;transform:translateX(-50
 <div class="hud card" id="gg"></div>
 <div class="hud card" id="pr"></div>
 <div class="hud card" id="sp"></div>
-<button id="evb" type="button">🔔 합동 대피 훈련 참여하기 (P · 보너스)</button><button id="exitb" type="button">🏠 광장으로 나가기</button><div id="topc"><div id="goal" class="card"><div class="l1"></div><div class="l2"></div><div class="l3"><div class="pbar"><i></i></div><span class="pt"></span></div></div></div><div id="sigc"></div><div id="demo">시안 · 제안용 데모 화면</div>
+<button id="evb" type="button">🔔 합동 대피 훈련 참여하기 (P · 보너스)</button><button id="exitb" type="button">🏠 약속 빌리지로 나가기</button><div id="topc"><div id="goal" class="card"><div class="l1"></div><div class="l2"></div><div class="l3"><div class="pbar"><i></i></div><span class="pt"></span></div></div></div><div id="sigc"></div><div id="demo">시안 · 제안용 데모 화면</div>
 <button id="helpb" type="button" title="도움말 (안내 다시 보기)" aria-label="도움말">?</button><div id="cue"></div><div id="hint"></div><div id="dn" class="card"></div><div id="off"><div class="ar">➤</div><div class="dm"></div></div><div id="tl"></div>
 <div id="zt"></div><div id="ts"></div><div id="ban" class="card"></div><div id="nt"></div>
 <div id="rw" class="card"></div>
@@ -516,7 +516,7 @@ for(let x=-45;x<=-12;x+=1.7)bush(x,28.2,1.05);for(let x=12;x<=45;x+=1.7)bush(x,2
 /* 입구 앞 횡단보도·라바콘 */
 for(let i=-3;i<=3;i++){const s=slab(i*.95,40,.6,3,'#FFFFFF',.02,.01,.1);}
 cone(-4.2,38);cone(4.2,38);cone(-4.2,42);cone(4.2,42);
-postSign(0,60.5,Math.PI,3.2,5.8,1,['프로미 광장으로  ▶'],{bg:'#CFEFB8',px:52,bd:'#7BCB5A'});
+postSign(0,60.5,Math.PI,3.2,5.8,1,['약속 빌리지로  ▶'],{bg:'#CFEFB8',px:52,bd:'#7BCB5A'});
 /* 나무·덤불 */
 const KEEP=[[0,11,13],[0,2,14],[-28,6,14],[28,8,16],[0,-14,22],[0,45,6]];
 function free(x,z){if(z>26&&z<30)return false;if(z>29&&Math.abs(x)<5)return false;if(z<29&&z>-7){}
@@ -967,7 +967,7 @@ function updMascots(){
 setInterval(updMascots,120);
 $('#dn').onclick=()=>{clearTimeout(dqT);$('#dn').className='card';setTimeout(nextDone,120)};
 const ZN3={traffic:['🚦','교통관'],fire:['🔥','화재관'],living:['🏠','생활안전관']},ZORDER=['traffic','fire','living'];
-function nextTask(){const id=curMission();if(id==='wall')return'약속 벽에 안전모 걸기';if(id==='free')return'자유롭게 둘러봐요 (끝내려면 광장으로 나가기)';const m=MIS[id];return m?(ZN3[m.zone]?ZN3[m.zone][1]+' · ':'')+m.title:''}
+function nextTask(){const id=curMission();if(id==='wall')return'약속 벽에 안전모 걸기';if(id==='free')return'자유롭게 둘러봐요 (끝내려면 약속 빌리지로 나가기)';const m=MIS[id];return m?(ZN3[m.zone]?ZN3[m.zone][1]+' · ':'')+m.title:''}
 function zoneClear(z){const nx=ZORDER.find(k=>!ZM[k].every(doneM)),Z=ZN3[z];
  pushDone({kind:'zone',head:`${Z[0]} ${Z[1]} 끝!`,title:`${ZM[z].length}개 미션을 모두 마쳤어요`,sub:nx?`다음은 ${ZN3[nx][0]} ${ZN3[nx][1]}으로 가요 ▶▶`:'3관을 모두 마쳤어요!',items:[],next:nx?`노란 화살표를 따라 ${ZN3[nx][1]}으로 이동해요`:'내 안전모를 약속 벽에 걸어요',ms:2800})}
 /* 진행 표시(3관) + 신호 칩 */
@@ -1305,7 +1305,7 @@ function updMail(){for(let i=MFLY.length-1;i>=0;i--){const f=MFLY[i],u=Math.min(
 /* ================= 상호작용 찾기 ================= */
 function findIA(){const c=[];let mis=false;const MB=(GD&&GD.x!=null&&GD.e&&dtg(GD.x,GD.z)<GD.r)?9:0;const add=(d,max,label,act,pri=0)=>{if(d<=max)c.push({d:d-pri-(mis?MB:0),label,act})};
  const dd=(x,z)=>Math.hypot(PL.x-x,PL.z-z);
- add(dd(0,58.8),4.2,'프로미 광장으로 가기 (이동)',()=>{saveS();location.href='../B_광장/latest.html'},3);
+ add(dd(0,58.8),4.2,'약속 빌리지로 가기 (이동)',()=>{saveS();location.href='../B_광장/latest.html'},3);
  PROMIES.forEach(p=>add(dd(p.root.position.x,p.root.position.z),3.8,'프로미와 이야기하기',()=>talkPromy(p),1));
  PERSONS.forEach(p=>{if(p.hidden)return;add(dd(p.root.position.x,p.root.position.z),2.4,`${p.nick}에게 인사·응원`,()=>greet(p))});
  if(PL.z<5.5&&PL.z>.6){if(coreDone()&&!S.safety.hung&&INH.slot)add(Math.abs(PL.x-INH.slot.x),30,'약속 벽에 안전모 걸기',hangHelmet,40);
@@ -1367,7 +1367,7 @@ function taskLines(g,near){const id=g.id,far='노란 화살표를 따라 걸어�
   if(!CP.placed)return near?['화로를 들어요',H+act]:['화로가 있는 곳으로 가요',H+far];
   return['거의 다 됐어요!',H+'잠깐만 기다려요'];
  case'wall':return near?['내 안전모를 약속 벽에 걸어요',H+act+(S.promise?'':' · 약속 한 줄을 먼저 정해요')]:['약속 벽으로 가요',H+far];
- default:return['모든 미션을 마쳤어요! 자유롭게 둘러봐요',H+'끝내려면 왼쪽 위 "광장으로 나가기"를 눌러요']}}
+ default:return['모든 미션을 마쳤어요! 자유롭게 둘러봐요',H+'끝내려면 왼쪽 위 "약속 빌리지로 나가기"를 눌러요']}}
 function guide(){const id=curMission();
  const G=(x,z,name,jo,r,sr,near,e=true)=>({id,x,z,name,r,sr,near,e,far:`▶ 노란 화살표를 따라 '${name}'${jo} 가세요`});
  const X=text=>({id,x:null,text});
@@ -1402,7 +1402,7 @@ function guide(){const id=curMission();
   if(!CP.placed)return G(BRZ.node.position.x,BRZ.node.position.z,'화로','로',2.2,1.3,'화로 들기');
   return X('⛺ 거의 다 됐어요!')}
  case'wall':return G(INH.slot?INH.slot.x:0,3.2,'함께 지킨 약속 벽 (안전모 걸이)','으로',3.2,1.2,'내 안전모를 벽에 걸기');
- default:return X("🎉 모두 마쳤어요! 자유롭게 둘러보고, 끝내려면 왼쪽 위 '광장으로 나가기'를 눌러요")}}
+ default:return X("🎉 모두 마쳤어요! 자유롭게 둘러보고, 끝내려면 왼쪽 위 '약속 빌리지로 나가기'를 눌러요")}}
 const inCor=(x,z)=>x>COR.x0-.4&&x<COR.x1+.9&&z>COR.z0&&z<COR.z1;
 function routeTo(tx,tz,full){const p=[];
  /* v13: 연기 복도는 서쪽 입구로 들어가 동쪽 출구(문)로 나온다. 출구 문 → 복도 밖 길 → 다음 목표 */
@@ -1620,7 +1620,7 @@ function exposeDbg(){const TP={gate:[0,34],yard:[0,20],wall:[0,3.2],carpet:[-21.
   state(){return{pos:[+PL.x.toFixed(1),+PL.z.toFixed(1)],zone:zoneOf(PL.x,PL.z),helmet:PL.hasHelmet,inherit:INH.slot&&INH.slot.nick,cur:curMission(),S:{nick:S.nick,promise:S.promise,stamps:stampN(),done:S.done,lamps:S.lamps,warmth:S.warmth,grade:S.grade,safety:S.safety},cross:{...CR},ext:{held:EXT.held,step:EXT.step,acc:+EXT.acc.toFixed(1),hp:+FUR[1].hp.toFixed(2)},cpr:{st:CPR.st,cnt:CPR.cnt,comp:CPR.compCnt},flag:{st:FLG.st,kids:FLG.kids.size},camp:{...CP},smoke:{...SM},signal:sig.ph,ev:EV.state,persons:PERSONS.length,promies:PROMIES.length,fps:+FPS.toFixed(0),glb:Object.keys(GLB),draw:renderer.info.render.calls,tris:renderer.info.render.triangles}}}}
 </script><script src="../assets_promy/bgm.js" data-mood="hall"></script>
 
-<!-- MISSION-CLEAR: 모든 미션을 끝내면 크게 뜨는 화면 + 광장으로 돌아가기 -->
+<!-- MISSION-CLEAR: 모든 미션을 끝내면 크게 뜨는 화면 + 약속 빌리지로 돌아가기 -->
 <style>
 #mclear{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 42%,rgba(255,200,60,.9),rgba(255,170,40,.75) 28%,rgba(18,42,22,.94) 70%);font-family:'Paperlogy','Apple SD Gothic Neo','Malgun Gothic',sans-serif;overflow:hidden}
 #mclear.show{display:flex;animation:mcIn .35s ease-out}
@@ -1645,7 +1645,7 @@ function exposeDbg(){const TP={gate:[0,34],yard:[0,20],wall:[0,3.2],carpet:[-21.
  <h1>미션 클리어!</h1>
  <img class="mcimg" id="mcImg" alt="">
  <div class="mcsub" id="mcSub"></div>
- <a class="mcgo" id="mcGo" href="../B_광장/latest.html">광장으로 돌아가기 <span aria-hidden="true">›</span></a>
+ <a class="mcgo" id="mcGo" href="../B_광장/latest.html">약속 빌리지로 돌아가기 <span aria-hidden="true">›</span></a>
  <div class="mcrow"><button class="mcsec" id="mcRec" type="button" hidden>내 기록 보기</button><button class="mcghost" id="mcStay" type="button">계속 둘러보기</button></div>
 </div></div>
 <script>
