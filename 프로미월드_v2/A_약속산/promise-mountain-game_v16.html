@@ -2099,7 +2099,7 @@ const PATHL=[0];for(let i=1;i<PATH.length;i++)PATHL.push(PATHL[i-1]+Math.hypot(P
 function pathIdx(x,z){let bi=0,bd=1e18;for(let i=0;i<PATH.length;i+=4){const d=(PATH[i].x-x)**2+(PATH[i].z-z)**2;if(d<bd){bd=d;bi=i}}
   for(let i=Math.max(0,bi-4);i<=Math.min(PATH.length-1,bi+4);i++){const d=(PATH[i].x-x)**2+(PATH[i].z-z)**2;if(d<bd){bd=d;bi=i}}return bi}
 var camManual=0;let curWP=null;const ROUTE=[];
-const GUIDE_N=60,GUIDE_SP=3.2;
+/* v16d: 화살표가 너무 많다는 지적 → 바닥 화살표는 앞쪽 3개만, 간격 넓게 */const GUIDE_N=3,GUIDE_SP=6.5;
 const guideGeo=new THREE.BufferGeometry();guideGeo.setAttribute('position',new THREE.Float32BufferAttribute([0,0,1.1,-.8,0,-.6,0,0,-.05,0,0,1.1,0,0,-.05,.8,0,-.6],3));
 const guideIM=new THREE.InstancedMesh(guideGeo,new THREE.MeshBasicMaterial({color:'#ffd21f',transparent:true,opacity:.9,depthWrite:false,depthTest:false,side:THREE.DoubleSide,toneMapped:false,fog:false}),GUIDE_N);
 guideIM.frustumCulled=false;guideIM.renderOrder=9;guideIM.visible=false;scene.add(guideIM);
@@ -2112,12 +2112,12 @@ function updRoute(g,t){
   R.push({x:g.x,z:g.z});
   curWP=R[R.length-1];for(let i=1;i<R.length;i++){if(Math.hypot(R[i].x-pos.x,R[i].z-pos.z)>5.5){curWP=R[i];break}}
   let tot=0;for(let i=0;i<R.length-1;i++)tot+=Math.hypot(R[i+1].x-R[i].x,R[i+1].z-R[i].z);
-  let n=0,acc=0,next=3.4+((t*2.4)%GUIDE_SP);
+  let n=0,acc=0,next=5.5;
   for(let i=0;i<R.length-1&&n<GUIDE_N;i++){const dx=R[i+1].x-R[i].x,dz=R[i+1].z-R[i].z,L=Math.hypot(dx,dz);if(L<1e-4)continue;const ux=dx/L,uz=dz/L;
     while(next<acc+L&&n<GUIDE_N&&next<tot-2.2){const q=next-acc,x=R[i].x+ux*q,z=R[i].z+uz*q;
       _gP.set(x,Math.max(Hc(x,z),Hc(x+ux*.9,z+uz*.9),Hc(x-ux*.9,z-uz*.9))+.5,z);_gQ.setFromAxisAngle(_gUp,Math.atan2(ux,uz)).multiply(_gTilt);_gM.compose(_gP,_gQ,_gS);guideIM.setMatrixAt(n++,_gM);next+=GUIDE_SP}
     acc+=L}
-  guideIM.count=n;guideIM.instanceMatrix.needsUpdate=true;guideIM.visible=n>0}
+  guideIM.count=n;guideIM.instanceMatrix.needsUpdate=true;guideIM.visible=false/* v16d: 바닥 화살표 줄은 끄고 발밑 화살표 1개만 */}
 /* 카메라 충돌: 플레이어 머리에서 카메라까지 광선이 간판·지붕·건물 상자에 닿으면 그 앞으로 당긴다 */
 let OCC=null;const _co=new THREE.Vector3();
 function buildOcc(){OCC=[];scene.updateMatrixWorld(true);const ex=new Set([avatar,friend.root]);CROWD().forEach(c=>c&&c.c&&ex.add(c.c.root));promyAll().forEach(c=>c&&c.root&&ex.add(c.root));
@@ -2572,13 +2572,13 @@ let goalDt=1/60;
 /* v16c: 발밑 방향 화살표 — 캐릭터 바로 앞 바닥에서 다음 경유지(길을 따라)를 가리킨다. 지형·캐릭터에 가려지지 않게 맨 위에 그린다 */
 const footArrow=(()=>{const sh=new THREE.Shape();sh.moveTo(0,1.5);sh.lineTo(-1.05,.15);sh.lineTo(-.42,.15);sh.lineTo(-.42,-1.1);sh.lineTo(.42,-1.1);sh.lineTo(.42,.15);sh.lineTo(1.05,.15);sh.closePath();
   const g=new THREE.ShapeGeometry(sh);g.rotateX(-Math.PI/2);g.scale(1,1,-1);
-  const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:'#ffd21f',transparent:true,opacity:.95,depthTest:false,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,fog:false}));
-  const o=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:'#7a4a00',transparent:true,opacity:.55,depthTest:false,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,fog:false}));o.scale.setScalar(1.18);o.position.y=-.01;o.renderOrder=13;
+  const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:'#ffd21f',transparent:true,opacity:.95,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,fog:false,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4}));
+  const o=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:'#7a4a00',transparent:true,opacity:.55,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,fog:false,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3}));o.scale.setScalar(1.18);o.position.y=-.01;o.renderOrder=13;
   m.renderOrder=14;const G=new THREE.Group();G.add(o,m);G.visible=false;G.frustumCulled=false;scene.add(G);return G})();
 function updFootArrow(t,d){const wp=curWP;if(!wp||d<3.2){footArrow.visible=false;return}
   const dx=wp.x-pos.x,dz=wp.z-pos.z,L=Math.hypot(dx,dz);if(L<.5){footArrow.visible=false;return}
-  const ux=dx/L,uz=dz/L,r=2.2+.35*Math.sin(t*5),x=pos.x+ux*r,z=pos.z+uz*r;
-  footArrow.position.set(x,Hc(x,z)+.35,z);footArrow.rotation.set(0,Math.atan2(ux,uz),0);footArrow.scale.setScalar(1.15);footArrow.visible=true}
+  const ux=dx/L,uz=dz/L,r=4.2+.35*Math.sin(t*5),x=pos.x+ux*r,z=pos.z+uz*r;
+  footArrow.position.set(x,Math.max(Hc(x,z),Hc(x+ux*1.2,z+uz*1.2),Hc(x-ux*1.2,z-uz*1.2))+.3,z);footArrow.rotation.set(0,Math.atan2(ux,uz),0);footArrow.scale.setScalar(1.15);footArrow.visible=true}
 function goalMarkers(t){zoneUpdate(goalDt,t);if(!friendJoined&&GS.started&&!uiBlock&&(!window.__askT||t-window.__askT>7||t<window.__askT)){window.__askT=t;try{wbubble(friend.head,'같이 올라갈래? 나한테 와서 E 눌러 줘! 🤝')}catch(e){}}const g=GS.tgt,el=$('#edgeArrow');const hb=hintUntil>performance.now();el.classList.toggle('blink',hb);
   if(!g||photoCam||!GS.started||uiBlock){arrowM.visible=arrowRing.visible=false;el.classList.remove('on');curWP=null;guideIM.visible=false;footArrow.visible=false;return}
   updRoute(g,t);
